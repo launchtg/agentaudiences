@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import ActionCard from "@/components/ActionCard";
 import ApiPreview from "@/components/ApiPreview";
 import StatCard from "@/components/StatCard";
@@ -11,13 +12,33 @@ import { generateSegments } from "@/lib/generators/segments";
 import { generateActions } from "@/lib/generators/actions";
 
 export default function AgentFeedPage() {
+  return (
+    <Suspense>
+      <AgentFeedInner />
+    </Suspense>
+  );
+}
+
+function AgentFeedInner() {
+  const searchParams = useSearchParams();
   const [actions, setActions] = useState<AgentAction[]>([]);
   const [showApi, setShowApi] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function generate() {
+  useEffect(() => {
+    if (searchParams.get("demo") === "1" && actions.length === 0) {
+      generate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function generate() {
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 500));
     const segs = generateSegments(MOCK_AUDIENCE, MOCK_SUBSCRIBERS);
     const acts = generateActions(MOCK_AUDIENCE, segs);
     setActions(acts);
+    setLoading(false);
   }
 
   function handleStatusChange(id: string, status: string) {
@@ -31,7 +52,6 @@ export default function AgentFeedPage() {
   const highCount = visible.filter((a) => a.priority === "high").length;
   const mediumCount = visible.filter((a) => a.priority === "medium").length;
 
-  // Build the API response shape
   const apiResponse = {
     audience_id: MOCK_AUDIENCE.id,
     total: visible.length,
@@ -55,10 +75,19 @@ export default function AgentFeedPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-xl font-bold text-white">Agent Feed</h1>
-          <p className="mt-0.5 text-sm text-muted">
-            {visible.length > 0
-              ? `${visible.length} prioritized actions sorted by score`
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-xl font-bold text-white">Agent Feed</h1>
+            {visible.length > 0 && (
+              <span className="rounded bg-neon/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neon">
+                Live
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-muted">
+            {loading
+              ? "Prioritizing revenue actions..."
+              : visible.length > 0
+              ? `${visible.length} actions sorted by score — ready for agent execution`
               : "Generate scored, agent-ready revenue actions."}
           </p>
         </div>
@@ -66,42 +95,41 @@ export default function AgentFeedPage() {
           {visible.length > 0 && (
             <button
               onClick={() => setShowApi(!showApi)}
-              className="inline-flex h-9 items-center rounded-lg border border-white/10 px-4 text-sm font-medium text-white hover:bg-white/[0.04] transition-colors"
+              className="inline-flex h-9 items-center rounded-lg border border-border px-4 text-sm font-medium text-muted hover:text-white hover:border-neon/30 transition-colors"
             >
-              {showApi ? "Hide" : "Show"} API Preview
+              {showApi ? "Hide" : "Show"} API
             </button>
           )}
           <button
             onClick={generate}
-            className="inline-flex h-9 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-white hover:bg-accent-hover transition-colors"
+            disabled={loading}
+            className="inline-flex h-9 items-center rounded-lg bg-neon px-5 text-sm font-bold text-background hover:brightness-110 transition-all disabled:opacity-50"
           >
-            {visible.length > 0 ? "Regenerate" : "Generate Agent Feed"}
+            {loading ? "Generating..." : visible.length > 0 ? "Regenerate" : "Generate Feed"}
           </button>
         </div>
       </div>
 
-      {visible.length === 0 ? (
+      {visible.length === 0 && !loading ? (
         <EmptyState
           title="No actions generated"
-          description="Generate the agent feed to see prioritized, scored revenue actions with full agent instructions."
+          description="Generate the agent feed to see prioritized, scored revenue actions with full execution instructions."
         />
-      ) : (
+      ) : visible.length > 0 ? (
         <>
           <div className="grid grid-cols-4 gap-4 mb-8">
             <StatCard label="Total Actions" value={visible.length} />
-            <StatCard label="Critical" value={criticalCount} />
+            <StatCard label="Critical" value={criticalCount} highlight={criticalCount > 0} />
             <StatCard label="High" value={highCount} />
             <StatCard label="Medium" value={mediumCount} />
           </div>
 
-          {/* API Preview */}
           {showApi && (
             <div className="mb-6">
               <ApiPreview data={apiResponse} audienceId={MOCK_AUDIENCE.id} />
             </div>
           )}
 
-          {/* Action cards */}
           <div className="grid gap-4">
             {visible.map((action) => (
               <ActionCard
@@ -112,7 +140,7 @@ export default function AgentFeedPage() {
             ))}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 }

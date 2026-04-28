@@ -26,18 +26,18 @@ export default function LandingPage() {
   return (
     <div className="min-h-full">
       {/* ── NAV ─────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border-subtle bg-background/80 backdrop-blur-lg">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-neon/[0.08] bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-          <Logo variant="horizontal" theme="dark" size="sm" />
+          <Logo variant="horizontal" theme="dark" size="md" />
           <div className="hidden md:flex items-center gap-6 text-[13px] text-muted">
-            <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
-            <a href="#agent-feed" className="hover:text-white transition-colors">Agent Feed</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+            <a href="#how-it-works" className="hover:text-neon transition-colors">How It Works</a>
+            <a href="#agent-feed" className="hover:text-neon transition-colors">Agent Feed</a>
+            <a href="#pricing" className="hover:text-neon transition-colors">Pricing</a>
           </div>
           <button
             onClick={runDemo}
             disabled={running}
-            className="inline-flex h-8 items-center rounded-md bg-neon px-4 text-[12px] font-bold text-background hover:brightness-110 transition-all disabled:opacity-60"
+            className="inline-flex h-8 items-center rounded-md bg-neon px-4 text-[12px] font-bold text-background hover:brightness-110 transition-all disabled:opacity-60 shadow-[0_0_20px_rgba(212,255,0,0.15)]"
           >
             {running ? "Launching..." : "Run Demo"}
           </button>
@@ -48,19 +48,21 @@ export default function LandingPage() {
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
         {/* Background accents */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-neon/[0.03] blur-[120px]" />
-          <div className="absolute top-40 right-0 w-[400px] h-[400px] rounded-full bg-neon/[0.02] blur-[80px]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-neon/[0.05] blur-[150px]" />
+          <div className="absolute top-40 right-0 w-[500px] h-[500px] rounded-full bg-neon/[0.04] blur-[100px]" />
+          <div className="absolute top-60 left-0 w-[300px] h-[300px] rounded-full bg-neon/[0.03] blur-[80px]" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-6">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left: Copy */}
             <div>
-              <p className="inline-block rounded-full border border-neon/20 bg-neon/[0.06] px-3.5 py-1 text-[11px] font-bold uppercase tracking-widest text-neon mb-6">
+              <p className="inline-block rounded-full border border-neon/30 bg-neon/[0.08] px-3.5 py-1 text-[11px] font-bold uppercase tracking-widest text-neon mb-6 shadow-[0_0_15px_rgba(212,255,0,0.1)]">
                 Agent-Ready Audience Intelligence
               </p>
               <h1 className="text-4xl md:text-[2.75rem] font-bold tracking-tight text-white leading-[1.12]">
-                Your audience is sitting on revenue.{" "}
+                Your audience is sitting on{" "}
+                <span className="text-neon">revenue</span>.{" "}
                 <span className="text-muted">Your agents just don&apos;t know where to look.</span>
               </h1>
               <p className="mt-5 max-w-lg text-base text-muted leading-relaxed">
@@ -73,13 +75,13 @@ export default function LandingPage() {
                 <button
                   onClick={runDemo}
                   disabled={running}
-                  className="inline-flex h-12 items-center rounded-lg bg-neon px-7 text-sm font-bold text-background hover:brightness-110 transition-all disabled:opacity-60"
+                  className="inline-flex h-12 items-center rounded-lg bg-neon px-7 text-sm font-bold text-background hover:brightness-110 transition-all disabled:opacity-60 shadow-[0_0_30px_rgba(212,255,0,0.2)]"
                 >
                   {running ? "Launching..." : "Run the Demo"}
                 </button>
                 <a
                   href="/agent-feed"
-                  className="inline-flex h-12 items-center rounded-lg border border-border px-7 text-sm font-medium text-white hover:bg-white/[0.04] transition-colors"
+                  className="inline-flex h-12 items-center rounded-lg border border-neon/20 px-7 text-sm font-medium text-neon hover:bg-neon/[0.06] transition-colors"
                 >
                   See the Agent Feed
                 </a>
@@ -92,14 +94,17 @@ export default function LandingPage() {
 
             {/* Right: Mock Agent Feed */}
             <div className="relative">
-              <div className="rounded-xl border border-border-subtle bg-surface overflow-hidden shadow-2xl shadow-black/40">
+              <div className="rounded-xl border border-neon/20 bg-surface overflow-hidden shadow-[0_0_60px_rgba(212,255,0,0.06)]">
                 {/* Feed header */}
-                <div className="flex items-center justify-between border-b border-border-subtle px-5 py-3">
+                <div className="flex items-center justify-between border-b border-neon/10 px-5 py-3">
                   <div className="flex items-center gap-2">
                     <span className="text-[13px] font-semibold text-white">Agent Feed</span>
-                    <span className="rounded bg-neon/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neon">Live</span>
+                    <span className="relative rounded bg-neon/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neon">
+                      <span className="absolute -left-0.5 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-neon animate-pulse" />
+                      <span className="pl-2">Live</span>
+                    </span>
                   </div>
-                  <span className="rounded bg-white/[0.05] px-2 py-0.5 text-[10px] font-mono text-muted">JSON / API</span>
+                  <span className="rounded bg-neon/[0.06] px-2 py-0.5 text-[10px] font-mono text-neon/70">JSON / API</span>
                 </div>
 
                 {/* Action cards */}
@@ -127,20 +132,25 @@ export default function LandingPage() {
                   />
                 </div>
               </div>
-              {/* Subtle glow behind panel */}
-              <div className="absolute -inset-4 -z-10 rounded-2xl bg-neon/[0.03] blur-2xl" />
+              {/* Glow behind panel */}
+              <div className="absolute -inset-6 -z-10 rounded-3xl bg-neon/[0.06] blur-3xl" />
             </div>
           </div>
         </div>
       </section>
 
+      {/* ── Neon divider ─────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
+      </div>
+
       {/* ── PROBLEM ─────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28 border-t border-border-subtle">
+      <section className="py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
               Your audience data is useful.{" "}
-              <span className="text-muted">But your agents need instructions.</span>
+              <span className="text-neon/60">But your agents need instructions.</span>
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-base text-muted leading-relaxed">
               Most tools show you dashboards, charts, and segments. But they still
@@ -168,13 +178,23 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Neon divider ─────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
+      </div>
+
       {/* ── HOW IT WORKS ────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 md:py-28 border-t border-border-subtle bg-surface/50">
-        <div className="mx-auto max-w-6xl px-6">
+      <section id="how-it-works" className="py-20 md:py-28 relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-neon/[0.03] blur-[120px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-neon mb-3">How It Works</p>
+            <p className="inline-block rounded-full border border-neon/20 bg-neon/[0.06] px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-neon mb-3">How It Works</p>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              From audience data to agent-ready revenue actions.
+              From audience data to <span className="text-neon">agent-ready</span> revenue actions.
             </h2>
           </div>
 
@@ -198,14 +218,19 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Neon divider ─────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
+      </div>
+
       {/* ── AGENT FEED SECTION ──────────────────────────────────── */}
-      <section id="agent-feed" className="py-20 md:py-28 border-t border-border-subtle">
+      <section id="agent-feed" className="py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid lg:grid-cols-2 gap-14 items-start">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-neon mb-3">Agent Feed</p>
+              <p className="inline-block rounded-full border border-neon/20 bg-neon/[0.06] px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-neon mb-3">Agent Feed</p>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-                The feed your agents actually need.
+                The feed your agents <span className="text-neon">actually need</span>.
               </h2>
               <p className="mt-4 text-base text-muted leading-relaxed">
                 Every action answers what to do, who to act on, why now, what
@@ -222,7 +247,7 @@ export default function LandingPage() {
                   "Human approval steps",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-2.5 text-sm">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neon/10">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neon/15 shadow-[0_0_8px_rgba(212,255,0,0.1)]">
                       <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                         <path d="M2 5l2.5 2.5L8 3" stroke="#D4FF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -234,47 +259,59 @@ export default function LandingPage() {
             </div>
 
             {/* JSON preview */}
-            <div className="rounded-xl border border-border-subtle bg-surface overflow-hidden">
-              <div className="flex items-center justify-between border-b border-border-subtle px-5 py-3">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Agent-Ready Output</span>
-                <span className="rounded bg-neon/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neon">JSON</span>
-              </div>
-              <pre className="px-5 py-4 text-[12px] leading-[1.7] text-white/60 font-mono overflow-x-auto">
+            <div className="relative">
+              <div className="rounded-xl border border-neon/15 bg-surface overflow-hidden shadow-[0_0_40px_rgba(212,255,0,0.04)]">
+                <div className="flex items-center justify-between border-b border-neon/10 px-5 py-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Agent-Ready Output</span>
+                  <span className="rounded bg-neon/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neon">JSON</span>
+                </div>
+                <pre className="px-5 py-4 text-[12px] leading-[1.7] text-white/60 font-mono overflow-x-auto">
 {`{
-  `}<span className="text-neon/70">&quot;action_type&quot;</span>{`: `}<span className="text-amber-300/80">&quot;sponsor_pitch&quot;</span>{`,
-  `}<span className="text-neon/70">&quot;priority&quot;</span>{`: `}<span className="text-amber-300/80">&quot;critical&quot;</span>{`,
-  `}<span className="text-neon/70">&quot;action_score&quot;</span>{`: `}<span className="text-[#D4FF00]/80">92</span>{`,
-  `}<span className="text-neon/70">&quot;segment&quot;</span>{`: `}<span className="text-amber-300/80">&quot;High-Income SaaS Founders&quot;</span>{`,
-  `}<span className="text-neon/70">&quot;estimated_value&quot;</span>{`: `}<span className="text-amber-300/80">&quot;$6,200\u2013$14,500&quot;</span>{`,
-  `}<span className="text-neon/70">&quot;agent_instruction&quot;</span>{`: {
-    `}<span className="text-neon/70">&quot;goal&quot;</span>{`: `}<span className="text-amber-300/80">&quot;secure 1-2 sponsor deals&quot;</span>{`,
-    `}<span className="text-neon/70">&quot;channel&quot;</span>{`: `}<span className="text-amber-300/80">&quot;email&quot;</span>{`,
-    `}<span className="text-neon/70">&quot;approval_required&quot;</span>{`: `}<span className="text-[#D4FF00]/80">true</span>{`
+  `}<span className="text-neon">&quot;action_type&quot;</span>{`: `}<span className="text-amber-300/80">&quot;sponsor_pitch&quot;</span>{`,
+  `}<span className="text-neon">&quot;priority&quot;</span>{`: `}<span className="text-amber-300/80">&quot;critical&quot;</span>{`,
+  `}<span className="text-neon">&quot;action_score&quot;</span>{`: `}<span className="text-neon font-bold">92</span>{`,
+  `}<span className="text-neon">&quot;segment&quot;</span>{`: `}<span className="text-amber-300/80">&quot;High-Income SaaS Founders&quot;</span>{`,
+  `}<span className="text-neon">&quot;estimated_value&quot;</span>{`: `}<span className="text-amber-300/80">&quot;$6,200–$14,500&quot;</span>{`,
+  `}<span className="text-neon">&quot;agent_instruction&quot;</span>{`: {
+    `}<span className="text-neon">&quot;goal&quot;</span>{`: `}<span className="text-amber-300/80">&quot;secure 1-2 sponsor deals&quot;</span>{`,
+    `}<span className="text-neon">&quot;channel&quot;</span>{`: `}<span className="text-amber-300/80">&quot;email&quot;</span>{`,
+    `}<span className="text-neon">&quot;approval_required&quot;</span>{`: `}<span className="text-neon font-bold">true</span>{`
   }
 }`}
-              </pre>
+                </pre>
+              </div>
+              <div className="absolute -inset-4 -z-10 rounded-2xl bg-neon/[0.04] blur-2xl" />
             </div>
           </div>
         </div>
       </section>
 
+      {/* ── Neon divider ─────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
+      </div>
+
       {/* ── DIFFERENTIATION ─────────────────────────────────────── */}
-      <section className="py-20 md:py-28 border-t border-border-subtle bg-surface/50">
-        <div className="mx-auto max-w-6xl px-6">
+      <section className="py-20 md:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-neon/[0.03] blur-[100px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Not another dashboard.
+              Not another dashboard.{" "}
+              <span className="text-neon">A different category entirely.</span>
             </h2>
-            <p className="mt-3 text-base text-muted">A different category entirely.</p>
           </div>
 
           <div className="mx-auto max-w-3xl">
-            <div className="grid grid-cols-2 gap-px rounded-xl overflow-hidden border border-border-subtle bg-border-subtle">
+            <div className="grid grid-cols-2 gap-px rounded-xl overflow-hidden border border-neon/10 bg-border-subtle">
               {/* Headers */}
               <div className="bg-surface px-6 py-4">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-muted">Traditional Analytics</p>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-muted/60">Traditional Analytics</p>
               </div>
-              <div className="bg-surface px-6 py-4 border-l border-border-subtle">
+              <div className="bg-surface px-6 py-4 border-l border-neon/10">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-neon">AgentAudiences</p>
               </div>
               {/* Rows */}
@@ -286,10 +323,10 @@ export default function LandingPage() {
               ].map(([left, right], i) => (
                 <div key={i} className="contents">
                   <div className="bg-background px-6 py-3.5 border-t border-border-subtle">
-                    <p className="text-sm text-muted">{left}</p>
+                    <p className="text-sm text-muted/60 line-through decoration-muted/20">{left}</p>
                   </div>
-                  <div className="bg-background px-6 py-3.5 border-t border-l border-border-subtle">
-                    <p className="text-sm text-white">{right}</p>
+                  <div className="bg-background px-6 py-3.5 border-t border-l border-neon/10">
+                    <p className="text-sm text-neon/90">{right}</p>
                   </div>
                 </div>
               ))}
@@ -298,13 +335,18 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Neon divider ─────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
+      </div>
+
       {/* ── USE CASES ───────────────────────────────────────────── */}
-      <section className="py-20 md:py-28 border-t border-border-subtle">
+      <section className="py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-neon mb-3">Use Cases</p>
+            <p className="inline-block rounded-full border border-neon/20 bg-neon/[0.06] px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-neon mb-3">Use Cases</p>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              What your agents can do with it.
+              What your agents can <span className="text-neon">do with it</span>.
             </h2>
           </div>
 
@@ -333,13 +375,22 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Neon divider ─────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
+      </div>
+
       {/* ── PRICING ─────────────────────────────────────────────── */}
-      <section id="pricing" className="py-20 md:py-28 border-t border-border-subtle bg-surface/50">
-        <div className="mx-auto max-w-6xl px-6">
+      <section id="pricing" className="py-20 md:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-neon/[0.03] blur-[120px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-neon mb-3">Early Access Pricing</p>
+            <p className="inline-block rounded-full border border-neon/20 bg-neon/[0.06] px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-neon mb-3">Early Access Pricing</p>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Built for operators who want revenue actions,{" "}
+              Built for operators who want <span className="text-neon">revenue actions</span>,{" "}
               <span className="text-muted">not more reports.</span>
             </h2>
           </div>
@@ -392,12 +443,13 @@ export default function LandingPage() {
       </section>
 
       {/* ── FINAL CTA ───────────────────────────────────────────── */}
-      <section className="py-24 md:py-32 border-t border-border-subtle relative overflow-hidden">
+      <section className="py-24 md:py-32 border-t border-neon/[0.08] relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-neon/[0.04] blur-[100px]" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-neon/[0.06] blur-[120px]" />
+          <div className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-neon/[0.03] blur-[80px]" />
         </div>
         <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <Logo variant="icon" theme="dark" size="lg" className="mx-auto mb-8 opacity-40" />
+          <Logo variant="icon" theme="dark" size="lg" className="mx-auto mb-8 opacity-60" />
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
             Stop analyzing your audience.{" "}
             <span className="text-neon">Start deploying it.</span>
@@ -409,7 +461,7 @@ export default function LandingPage() {
             <button
               onClick={runDemo}
               disabled={running}
-              className="inline-flex h-12 items-center rounded-lg bg-neon px-8 text-sm font-bold text-background hover:brightness-110 transition-all disabled:opacity-60"
+              className="inline-flex h-12 items-center rounded-lg bg-neon px-8 text-sm font-bold text-background hover:brightness-110 transition-all disabled:opacity-60 shadow-[0_0_40px_rgba(212,255,0,0.25)]"
             >
               {running ? "Launching..." : "Run the Demo"}
             </button>
@@ -418,9 +470,9 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ──────────────────────────────────────────────── */}
-      <footer className="border-t border-border-subtle py-8">
+      <footer className="border-t border-neon/[0.08] py-8">
         <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <Logo variant="horizontal" theme="dark" size="sm" className="opacity-50" />
+          <Logo variant="horizontal" theme="dark" size="md" className="opacity-50" />
           <p className="text-[12px] text-muted/50 font-mono">
             Agent-ready audience intelligence.
           </p>
@@ -448,9 +500,9 @@ function MockActionCard({
   score: number;
 }) {
   const styles = {
-    critical: { border: "border-neon/30", badge: "bg-neon/15 text-neon", scoreColor: "text-neon" },
-    high: { border: "border-amber-400/20", badge: "bg-amber-400/10 text-amber-400", scoreColor: "text-white" },
-    medium: { border: "border-border-subtle", badge: "bg-white/[0.06] text-muted-light", scoreColor: "text-white" },
+    critical: { border: "border-neon/30 shadow-[inset_0_0_20px_rgba(212,255,0,0.04)]", badge: "bg-neon/15 text-neon", scoreColor: "text-neon", dot: "bg-neon" },
+    high: { border: "border-amber-400/20", badge: "bg-amber-400/10 text-amber-400", scoreColor: "text-amber-400", dot: "bg-amber-400" },
+    medium: { border: "border-border-subtle", badge: "bg-white/[0.06] text-muted-light", scoreColor: "text-white", dot: "bg-muted" },
   };
   const s = styles[priority];
 
@@ -459,13 +511,14 @@ function MockActionCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 mb-1.5">
+            <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
             <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest ${s.badge}`}>
               {priority}
             </span>
             <span className="text-[10px] text-muted">{segment.toLocaleString()} subscribers</span>
           </div>
           <p className="text-[13px] font-semibold text-white leading-snug">{title}</p>
-          <p className="mt-1 text-[11px] text-muted">Est. value: <span className="text-white/80">{value}</span></p>
+          <p className="mt-1 text-[11px] text-muted">Est. value: <span className="text-neon/80 font-medium">{value}</span></p>
         </div>
         <div className="flex flex-col items-end shrink-0">
           <span className={`text-xl font-bold tabular-nums ${s.scoreColor}`}>{score}</span>
@@ -478,35 +531,44 @@ function MockActionCard({
 
 function PainCard({ number, title, description }: { number: string; title: string; description: string }) {
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface p-6 hover:border-border transition-colors">
-      <span className="text-[11px] font-bold text-neon/50 font-mono">{number}</span>
-      <h3 className="mt-2 text-[15px] font-semibold text-white">{title}</h3>
-      <p className="mt-2 text-sm text-muted leading-relaxed">{description}</p>
+    <div className="rounded-xl border border-border-subtle bg-surface p-6 hover:border-neon/20 transition-all group relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-neon/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="relative">
+        <span className="text-[11px] font-bold text-neon font-mono">{number}</span>
+        <h3 className="mt-2 text-[15px] font-semibold text-white">{title}</h3>
+        <p className="mt-2 text-sm text-muted leading-relaxed">{description}</p>
+      </div>
     </div>
   );
 }
 
 function StepCard({ step, title, description }: { step: string; title: string; description: string }) {
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface p-6 relative overflow-hidden group hover:border-neon/20 transition-colors">
-      <div className="absolute top-4 right-4 text-[48px] font-bold text-white/[0.03] font-mono leading-none select-none">{step}</div>
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neon/10 mb-4">
-        <span className="text-[12px] font-bold text-neon font-mono">{step}</span>
+    <div className="rounded-xl border border-border-subtle bg-surface p-6 relative overflow-hidden group hover:border-neon/30 transition-all">
+      <div className="absolute inset-0 bg-gradient-to-br from-neon/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute top-4 right-4 text-[48px] font-bold text-neon/[0.04] font-mono leading-none select-none">{step}</div>
+      <div className="relative">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neon/15 mb-4 shadow-[0_0_12px_rgba(212,255,0,0.1)]">
+          <span className="text-[12px] font-bold text-neon font-mono">{step}</span>
+        </div>
+        <h3 className="text-[15px] font-semibold text-white">{title}</h3>
+        <p className="mt-2 text-sm text-muted leading-relaxed">{description}</p>
       </div>
-      <h3 className="text-[15px] font-semibold text-white">{title}</h3>
-      <p className="mt-2 text-sm text-muted leading-relaxed">{description}</p>
     </div>
   );
 }
 
 function UseCaseCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface p-5 hover:border-border transition-colors">
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neon/[0.08] mb-4">
-        {icon}
+    <div className="rounded-xl border border-border-subtle bg-surface p-5 hover:border-neon/25 transition-all group relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-neon/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="relative">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neon/[0.12] mb-4 shadow-[0_0_12px_rgba(212,255,0,0.08)]">
+          {icon}
+        </div>
+        <h3 className="text-[14px] font-semibold text-white group-hover:text-neon transition-colors">{title}</h3>
+        <p className="mt-2 text-[13px] text-muted leading-relaxed">{description}</p>
       </div>
-      <h3 className="text-[14px] font-semibold text-white">{title}</h3>
-      <p className="mt-2 text-[13px] text-muted leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -529,11 +591,14 @@ function PricingCard({
   onCtaClick: () => void;
 }) {
   return (
-    <div className={`rounded-xl border p-6 flex flex-col ${
+    <div className={`rounded-xl border p-6 flex flex-col relative overflow-hidden ${
       featured
-        ? "border-neon/30 bg-neon/[0.03] shadow-[0_0_30px_rgba(212,255,0,0.05)]"
-        : "border-border-subtle bg-surface"
+        ? "border-neon/40 bg-neon/[0.04] shadow-[0_0_50px_rgba(212,255,0,0.08)]"
+        : "border-border-subtle bg-surface hover:border-neon/15 transition-colors"
     }`}>
+      {featured && (
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon to-transparent" />
+      )}
       {featured && (
         <span className="self-start rounded bg-neon/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neon mb-3">
           Most Popular
@@ -558,8 +623,8 @@ function PricingCard({
         onClick={onCtaClick}
         className={`mt-6 inline-flex h-10 w-full items-center justify-center rounded-lg text-sm font-bold transition-all ${
           featured
-            ? "bg-neon text-background hover:brightness-110"
-            : "border border-border text-white hover:bg-white/[0.04]"
+            ? "bg-neon text-background hover:brightness-110 shadow-[0_0_25px_rgba(212,255,0,0.2)]"
+            : "border border-neon/20 text-neon hover:bg-neon/[0.06]"
         }`}
       >
         {cta}

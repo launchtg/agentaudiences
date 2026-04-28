@@ -16,8 +16,8 @@ export default function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-56 flex-col border-r border-border-subtle bg-surface">
-      <div className="flex h-14 items-center border-b border-border-subtle px-5">
-        <Logo variant="horizontal" theme="dark" size="sm" />
+      <div className="flex items-center border-b border-border-subtle px-4 py-4">
+        <Logo variant="horizontal" theme="dark" size="lg" className="w-full h-auto" />
       </div>
 
       <nav className="flex-1 space-y-0.5 px-3 py-4">

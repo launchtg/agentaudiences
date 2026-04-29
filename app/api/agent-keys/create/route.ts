@@ -14,7 +14,7 @@ function hashKey(key: string): string {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { audienceId, name } = body;
+    const { audienceId, name, audienceName } = body;
 
     if (!audienceId || !name) {
       return NextResponse.json(
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Verify audience exists
+    // Check if audience exists
     const { data: audience, error: audError } = await supabase
       .from("audiences")
       .select("id")
@@ -33,10 +33,24 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (audError || !audience) {
-      return NextResponse.json(
-        { error: "Audience not found" },
-        { status: 404 }
-      );
+      // If audienceName provided, create the audience on the fly
+      if (audienceName) {
+        const { error: createError } = await supabase
+          .from("audiences")
+          .insert({ id: audienceId, name: audienceName, source: "demo" });
+
+        if (createError) {
+          return NextResponse.json(
+            { error: "Audience not found and could not be created", details: createError.message },
+            { status: 404 }
+          );
+        }
+      } else {
+        return NextResponse.json(
+          { error: "Audience not found" },
+          { status: 404 }
+        );
+      }
     }
 
     // Generate key

@@ -163,6 +163,7 @@ export default function AgentConnectionsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [feedPreview, setFeedPreview] = useState<Record<string, any> | null>(null);
   const [activePrompt, setActivePrompt] = useState<"universal" | "openclaw" | "claude" | "n8n">("universal");
+  const [error, setError] = useState("");
   const didInit = useRef(false);
 
   // Load audiences on mount
@@ -188,14 +189,20 @@ export default function AgentConnectionsPage() {
       // fall through
     }
 
-    // Fallback: check sessionStorage for demo audience
+    // Fallback: run demo to seed Supabase and get a real audience
     try {
       const stored = sessionStorage.getItem("demo_audience");
       if (stored) {
-        const aud = JSON.parse(stored);
-        if (aud.id && aud.name) {
-          setAudiences([{ id: aud.id, name: aud.name }]);
-          setSelectedAudienceId(aud.id);
+        // Demo was run but audience not in Supabase yet — run the demo API to seed it
+        const demoRes = await fetch("/api/demo/run", { method: "POST" });
+        if (demoRes.ok) {
+          const demoData = await demoRes.json();
+          if (demoData.audienceId) {
+            const aud = JSON.parse(stored);
+            setAudiences([{ id: demoData.audienceId, name: aud.name || "SaaS Growth Newsletter" }]);
+            setSelectedAudienceId(demoData.audienceId);
+            return;
+          }
         }
       }
     } catch {
@@ -224,20 +231,28 @@ export default function AgentConnectionsPage() {
   async function generateKey() {
     if (!selectedAudienceId || !keyName.trim()) return;
     setGenerating(true);
+    setError("");
+    const selectedAudience = audiences.find((a) => a.id === selectedAudienceId);
     try {
       const res = await fetch("/api/agent-keys/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ audienceId: selectedAudienceId, name: keyName.trim() }),
+        body: JSON.stringify({
+          audienceId: selectedAudienceId,
+          name: keyName.trim(),
+          audienceName: selectedAudience?.name,
+        }),
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setGeneratedKey({ apiKey: data.apiKey, feedUrl: data.feedUrl, keyPrefix: data.keyPrefix });
         setKeyName("");
         loadKeys(selectedAudienceId);
+      } else {
+        setError(data.error || "Failed to generate key");
       }
     } catch {
-      // ignore
+      setError("Network error — could not reach server");
     }
     setGenerating(false);
   }
@@ -366,6 +381,9 @@ export default function AgentConnectionsPage() {
             {generating ? "Generating..." : "Generate Key"}
           </button>
         </div>
+        {error && (
+          <p className="mt-3 text-xs text-red-400">{error}</p>
+        )}
         {generatedKey && (
           <div className="mt-4 rounded-md border border-neon/20 bg-neon/[0.03] p-4">
             <div className="flex items-center gap-2 mb-3">

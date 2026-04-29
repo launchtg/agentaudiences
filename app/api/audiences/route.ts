@@ -1,6 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 
+export async function GET() {
+  try {
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase
+      .from("audiences")
+      .select("id, name, source, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return NextResponse.json(
+        { error: "Failed to fetch audiences", details: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(data ?? []);
+  } catch {
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

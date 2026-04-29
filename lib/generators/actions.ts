@@ -37,7 +37,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Secure a paid sponsor placement targeting the "${seg.name}" segment in ${audience.name}`,
         steps: [
-          `Pull list of companies whose products align with segment traits: ${Object.values(seg.defining_traits).join(", ")}`,
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          `Using the member data, pull list of companies whose products align with segment traits: ${Object.values(seg.defining_traits).join(", ")}`,
           "Draft personalized pitch email highlighting segment size, engagement rate, and audience demographics",
           "Include media kit link and pricing for dedicated send vs inline placement",
           "Send to marketing/partnerships contacts at top 10 target companies",
@@ -75,8 +76,9 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Generate affiliate revenue from the "${seg.name}" segment through editorially integrated product recommendations`,
         steps: [
-          `Identify top 3 affiliate programs matching segment intent: ${Object.values(seg.defining_traits).join(", ")}`,
-          "Write editorial-style product recommendation (not banner ad) for next newsletter issue",
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          `Using the member data, identify top 3 affiliate programs matching segment intent: ${Object.values(seg.defining_traits).join(", ")}`,
+          "Write editorial-style product recommendation (not banner ad) for next newsletter issue, tailored to the member profiles",
           "A/B test placement: mid-article callout vs end-of-email featured tool",
           "Track click-through and conversion per affiliate link",
           "Optimize top performer into recurring placement",
@@ -114,7 +116,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Recover inactive subscribers in "${seg.name}" for ${audience.name}`,
         steps: [
-          `Segment inactive subscribers by last activity date and previous engagement level`,
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          "Using the member data, segment inactive subscribers by last activity date and previous engagement level",
           "Draft 3-email win-back sequence: (1) 'We miss you' with best recent content, (2) Exclusive offer or content preview, (3) Final 'Stay or go' with clear unsubscribe",
           "Set send cadence: Day 1, Day 4, Day 10",
           "Track opens and clicks per email in sequence",
@@ -153,7 +156,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Convert high-trust relationships in "${seg.name}" into premium revenue opportunities for ${audience.name}`,
         steps: [
-          "Review each subscriber's company, role, and past interactions",
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          "Using the member data, review each subscriber's company, role, and past interactions",
           "Draft personalized 1:1 outreach offering exclusive value (early access, advisory invite, co-creation opportunity)",
           "Embed soft partnership ask after establishing mutual value",
           "For each positive response, schedule a 20-minute discovery call",
@@ -192,7 +196,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Create a high-value custom audience from "${seg.name}" for programmatic ad monetization`,
         steps: [
-          "Export subscriber emails from this segment (hashed for privacy)",
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          "Using the member data, export subscriber emails (hashed for privacy) for ad platform upload",
           "Create custom audience in Meta Ads Manager and Google Ads",
           "Build lookalike audience (1–3%) from the custom audience",
           "Set up retargeting campaign or sell audience access to sponsors",
@@ -231,7 +236,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Strengthen ${audience.name} media kit with engagement data from "${seg.name}"`,
         steps: [
-          "Pull forwarding and sharing metrics for this segment",
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          "Using the member data, pull forwarding and sharing metrics for this segment",
           "Calculate viral coefficient: avg forwards per subscriber per month",
           "Add 'Audience Amplification' section to media kit with hard numbers",
           "Include anonymized testimonial or case study if a forwarder has responded positively",
@@ -270,7 +276,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Convert non-clicking readers in "${seg.name}" into active clickers for ${audience.name}`,
         steps: [
-          "Analyze which content topics this segment opens most consistently",
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          "Using the member data, analyze which content topics this segment opens most consistently",
           "Draft 3 alternative CTA formats: (1) inline text link, (2) callout box, (3) 'recommended reading' footer section",
           "A/B test all 3 formats in next newsletter send to this segment only",
           "Track click-through rate per format over 2 sends",
@@ -309,7 +316,8 @@ const ACTION_TEMPLATES: ActionTemplate[] = [
       agent_instruction: {
         objective: `Import "${seg.name}" into CRM and prepare geo-targeted outreach pipeline for ${audience.name}`,
         steps: [
-          "Export segment subscriber data with geography and engagement fields",
+          "Fetch the segment members from the segment_members_url on this action to get the full subscriber list with names, companies, titles, and engagement data",
+          "Using the member data, export subscriber data with geography and engagement fields",
           "Verify privacy compliance for each subscriber's country (GDPR, PIPEDA, etc.)",
           "Import compliant records into CRM with segment tag and source attribution",
           "Create a geo-targeted outreach sequence for international sponsors",

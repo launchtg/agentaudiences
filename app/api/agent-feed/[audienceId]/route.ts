@@ -123,8 +123,15 @@ export async function GET(
           ? evaluateActionExecution(a.action_type, capabilities)
           : undefined;
 
+        const host = req.headers.get("host") || "agentaudiences.vercel.app";
+        const protocol = host.includes("localhost") ? "http" : "https";
+
         return {
           id: a.id,
+          segment_id: a.segment_id,
+          segment_members_url: a.segment_id
+            ? `${protocol}://${host}/api/segments/${a.segment_id}/members`
+            : null,
           title: a.title,
           action_type: a.action_type,
           priority: a.priority,

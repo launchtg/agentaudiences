@@ -1,6 +1,6 @@
 import type { Audience, Subscriber, Segment } from "@/lib/mockData";
 
-interface SegmentRule {
+export interface SegmentRule {
   name: string;
   description: string;
   segment_type: string;
@@ -14,7 +14,7 @@ interface SegmentRule {
   confidence: number;
 }
 
-const SEGMENT_RULES: SegmentRule[] = [
+export const SEGMENT_RULES: SegmentRule[] = [
   {
     name: "Sponsor-Clickers With Budget Authority",
     description: "High-income subscribers who clicked sponsor links and hold director+ titles — prime sponsor pitch targets",

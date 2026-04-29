@@ -70,6 +70,21 @@ export interface AgentAction {
     segment_size_weight: number;
     execution_effort: number;
   };
+  execution?: {
+    status: "ready" | "partial" | "blocked";
+    using_user_tools: boolean;
+    available_capabilities: string[];
+    available_tools: string[];
+    missing_capabilities: string[];
+    primary_execution_path: string;
+    fallback_methods: string[];
+    optional_execution_tools: {
+      name: string;
+      category: string;
+      reason: string;
+      setup_time: string;
+    }[];
+  };
   status: string;
 }
 

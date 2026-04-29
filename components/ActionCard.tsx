@@ -30,6 +30,22 @@ const STATUS_STYLES: Record<string, string> = {
   dismissed: "bg-white/[0.04] text-muted/50",
 };
 
+const EXEC_STYLES: Record<string, { badge: string; label: string }> = {
+  ready: { badge: "bg-neon/15 text-neon", label: "Ready with your tools" },
+  partial: { badge: "bg-amber-400/10 text-amber-400", label: "Usable with fallback" },
+  blocked: { badge: "bg-white/[0.06] text-muted", label: "Setup needed" },
+};
+
+interface ExecutionData {
+  status: "ready" | "partial" | "blocked";
+  using_user_tools: boolean;
+  available_tools: string[];
+  missing_capabilities: string[];
+  primary_execution_path: string;
+  fallback_methods: string[];
+  optional_execution_tools: { name: string; category: string; reason: string; setup_time: string }[];
+}
+
 export default function ActionCard({
   action,
   onStatusChange,
@@ -46,12 +62,15 @@ export default function ActionCard({
     why_now: string;
     reasoning?: { segment_signal: string; revenue_logic: string; risk: string };
     agent_instruction?: { objective: string; steps: string[]; success_criteria: string; fallback: string };
+    execution?: ExecutionData;
     status: string;
   };
   onStatusChange?: (id: string, status: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const pri = PRIORITY_STYLES[action.priority] || PRIORITY_STYLES.medium;
+  const exec = action.execution;
+  const execStyle = exec ? EXEC_STYLES[exec.status] : null;
 
   return (
     <div className={`rounded-lg border ${pri.border} ${pri.glow} bg-surface overflow-hidden transition-all hover:bg-surface-raised`}>
@@ -59,13 +78,18 @@ export default function ActionCard({
       <div className="px-5 py-4">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${pri.badge}`}>
                 {pri.label}
               </span>
               <span className="rounded bg-white/[0.05] px-1.5 py-0.5 text-[10px] font-medium text-muted uppercase tracking-wider">
                 {action.action_type.replace(/_/g, " ")}
               </span>
+              {execStyle && (
+                <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${execStyle.badge}`}>
+                  {execStyle.label}
+                </span>
+              )}
               <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_STYLES[action.status] || STATUS_STYLES.new}`}>
                 {action.status.replace(/_/g, " ")}
               </span>
@@ -92,6 +116,72 @@ export default function ActionCard({
           <p className="text-[10px] font-bold uppercase tracking-widest text-neon mb-1">Why Now</p>
           <p className="text-xs text-white/80 leading-relaxed">{action.why_now}</p>
         </div>
+
+        {/* Execution Plan */}
+        {exec && (
+          <div className={`mt-3 rounded border px-3.5 py-2.5 ${
+            exec.status === "ready"
+              ? "border-neon/15 bg-neon/[0.03]"
+              : exec.status === "partial"
+              ? "border-amber-400/15 bg-amber-400/[0.03]"
+              : "border-border-subtle bg-white/[0.02]"
+          }`}>
+            <p className={`text-[10px] font-bold uppercase tracking-widest mb-1.5 ${
+              exec.status === "ready" ? "text-neon" : exec.status === "partial" ? "text-amber-400" : "text-muted"
+            }`}>
+              {exec.status === "ready" ? "Execution Path" : exec.status === "partial" ? "Best Available Path" : "Setup Needed"}
+            </p>
+            <p className="text-xs text-white/80 leading-relaxed">{exec.primary_execution_path}</p>
+
+            {exec.available_tools.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {exec.available_tools.map((tool) => (
+                  <span key={tool} className="rounded bg-neon/10 px-2 py-0.5 text-[10px] font-medium text-neon">
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {exec.missing_capabilities.length > 0 && (
+              <div className="mt-2">
+                <span className="text-[10px] text-muted">Missing: </span>
+                {exec.missing_capabilities.map((cap) => (
+                  <span key={cap} className="inline-block rounded bg-white/[0.04] px-2 py-0.5 text-[10px] text-muted mr-1 mb-1">
+                    {cap.replace(/_/g, " ")}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {exec.fallback_methods.length > 0 && (
+              <div className="mt-2">
+                <p className="text-[10px] font-semibold text-muted mb-1">Best no-new-tool path</p>
+                {exec.fallback_methods.map((fb, i) => (
+                  <p key={i} className="text-[11px] text-white/60 leading-relaxed">- {fb}</p>
+                ))}
+              </div>
+            )}
+
+            {exec.optional_execution_tools.length > 0 && (
+              <div className="mt-2 pt-2 border-t border-border-subtle">
+                <p className="text-[10px] font-semibold text-muted mb-1.5">Optional tools to scale this</p>
+                {exec.optional_execution_tools.map((tool) => (
+                  <div key={tool.name} className="flex items-start gap-2 mb-1.5 last:mb-0">
+                    <span className="rounded bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-muted shrink-0">{tool.category}</span>
+                    <div>
+                      <p className="text-[11px] text-white/70">{tool.name}</p>
+                      <p className="text-[10px] text-muted">{tool.reason} &middot; {tool.setup_time}</p>
+                    </div>
+                  </div>
+                ))}
+                <p className="text-[9px] text-muted/50 mt-1.5 italic">
+                  AgentAudiences always prioritizes tools you already have before suggesting anything new.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Channels */}
         <div className="mt-3 flex flex-wrap gap-1.5">

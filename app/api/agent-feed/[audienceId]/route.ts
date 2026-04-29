@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { createHash } from "crypto";
+import { evaluateActionExecution, type Capability } from "@/lib/execution/capabilities";
 
 function hashKey(key: string): string {
   return createHash("sha256").update(key).digest("hex");
@@ -75,6 +76,23 @@ export async function GET(
       .eq("id", audienceId)
       .single();
 
+    // Fetch capabilities for this audience
+    const { data: capRows } = await supabase
+      .from("audience_capabilities")
+      .select("*")
+      .eq("audience_id", audienceId);
+
+    const capabilities: Capability[] = (capRows ?? []).map((c) => ({
+      capability_key: c.capability_key,
+      capability_label: c.capability_label,
+      status: c.status as "available" | "missing",
+      connected_tool: c.connected_tool,
+      tool_category: c.tool_category,
+    }));
+
+    const availableCaps = capabilities.filter((c) => c.status === "available").map((c) => c.capability_key);
+    const missingCaps = capabilities.filter((c) => c.status === "missing").map((c) => c.capability_key);
+
     // Fetch visible actions sorted by score desc
     const { data: actions, error } = await supabase
       .from("agent_actions")
@@ -90,32 +108,43 @@ export async function GET(
       );
     }
 
-    // Return clean agent-ready structure
+    // Return clean agent-ready structure with execution metadata
     return NextResponse.json({
       audience: audience
         ? { id: audience.id, name: audience.name, source: audience.source }
         : { id: audienceId, name: "Unknown", source: "unknown" },
       generatedAt: new Date().toISOString(),
-      actions: (actions ?? []).map((a) => ({
-        id: a.id,
-        title: a.title,
-        action_type: a.action_type,
-        priority: a.priority,
-        action_score: a.action_score,
-        urgency: a.urgency,
-        estimated_value: a.estimated_value,
-        recommended_channels: a.recommended_channels,
-        why_now: a.why_now,
-        reasoning: a.reasoning,
-        agent_instruction: {
-          goal: a.agent_instruction?.objective || a.agent_instruction?.goal || "",
-          steps: a.agent_instruction?.steps || [],
-          copy_angle: a.agent_instruction?.copy_angle || "",
-          success_metric: a.agent_instruction?.success_criteria || a.agent_instruction?.success_metric || "",
-          human_approval_required: true,
-        },
-        status: a.status,
-      })),
+      capabilities: {
+        available: availableCaps,
+        missing: missingCaps,
+      },
+      actions: (actions ?? []).map((a) => {
+        const execution = capabilities.length > 0
+          ? evaluateActionExecution(a.action_type, capabilities)
+          : undefined;
+
+        return {
+          id: a.id,
+          title: a.title,
+          action_type: a.action_type,
+          priority: a.priority,
+          action_score: a.action_score,
+          urgency: a.urgency,
+          estimated_value: a.estimated_value,
+          recommended_channels: a.recommended_channels,
+          why_now: a.why_now,
+          reasoning: a.reasoning,
+          agent_instruction: {
+            goal: a.agent_instruction?.objective || a.agent_instruction?.goal || "",
+            steps: a.agent_instruction?.steps || [],
+            copy_angle: a.agent_instruction?.copy_angle || "",
+            success_metric: a.agent_instruction?.success_criteria || a.agent_instruction?.success_metric || "",
+            human_approval_required: true,
+          },
+          execution,
+          status: a.status,
+        };
+      }),
     });
   } catch {
     return NextResponse.json(

@@ -4,6 +4,11 @@ import {
   getPriority,
   type ScoringInputs,
 } from "@/lib/scoring";
+import {
+  evaluateActionExecution,
+  getDefaultCapabilities,
+  type Capability,
+} from "@/lib/execution/capabilities";
 
 interface ActionTemplate {
   action_type: string;
@@ -334,9 +339,11 @@ function makeActionId(): string {
 
 export function generateActions(
   audience: Audience,
-  segments: Segment[]
+  segments: Segment[],
+  capabilities?: Capability[]
 ): AgentAction[] {
   actionCounter = 0;
+  const caps = capabilities || getDefaultCapabilities();
 
   const actions: AgentAction[] = [];
 
@@ -350,6 +357,8 @@ export function generateActions(
 
       if (priority === "hidden") continue;
 
+      const execution = evaluateActionExecution(built.action_type, caps);
+
       actions.push({
         id: makeActionId(),
         audience_id: audience.id,
@@ -357,6 +366,7 @@ export function generateActions(
         action_score: score,
         priority,
         status: "new",
+        execution,
         ...built,
       });
     }

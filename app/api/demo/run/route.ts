@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { MOCK_SUBSCRIBERS } from "@/lib/mockData";
 import { generateSegments } from "@/lib/generators/segments";
 import { generateActions } from "@/lib/generators/actions";
+import { getDefaultCapabilities } from "@/lib/execution/capabilities";
 import type { Audience, Subscriber, Segment } from "@/lib/mockData";
 
 export async function POST() {
@@ -112,10 +113,25 @@ export async function POST() {
 
     console.log("[demo] Segments created:", savedSegs.length);
 
-    // 6. Generate actions using DB segments (which have UUID ids)
+    // 6. Insert demo capabilities
+    const demoCaps = getDefaultCapabilities();
+    const capRows = demoCaps.map((c) => ({
+      audience_id: audience.id,
+      capability_key: c.capability_key,
+      capability_label: c.capability_label,
+      status: c.status,
+      connected_tool: c.connected_tool,
+      tool_category: c.tool_category,
+    }));
+
+    await supabase.from("audience_capabilities").insert(capRows);
+    console.log("[demo] Capabilities inserted:", capRows.length);
+
+    // 7. Generate actions with capability-aware execution
     const generatedActions = generateActions(
       audForGen,
-      savedSegs as unknown as Segment[]
+      savedSegs as unknown as Segment[],
+      demoCaps
     );
 
     // 7. Insert actions into Supabase

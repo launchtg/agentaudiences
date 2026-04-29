@@ -10,6 +10,7 @@ const NAV = [
   { href: "/segments", label: "Segments", icon: PieIcon },
   { href: "/agent-feed", label: "Agent Feed", icon: ZapIcon },
   { href: "/agent-connections", label: "Agent Connections", icon: PlugIcon },
+  { href: "/settings/capabilities", label: "Capabilities", icon: GearIcon },
 ];
 
 export default function Sidebar() {
@@ -97,6 +98,15 @@ function PlugIcon({ active }: { active: boolean }) {
       <rect x="4" y="5" width="8" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
       <path d="M8 9v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
       <path d="M5.5 12h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function GearIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={active ? "text-neon" : "text-muted group-hover:text-white/60"}>
+      <circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
   );
 }

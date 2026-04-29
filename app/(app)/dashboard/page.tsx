@@ -44,6 +44,15 @@ export default function DashboardPage() {
     const acts = generateActions(MOCK_AUDIENCE, segs);
     setActions(acts);
 
+    // Persist to sessionStorage so agent-feed can read it
+    try {
+      sessionStorage.setItem("demo_actions", JSON.stringify(acts));
+      sessionStorage.setItem("demo_audience", JSON.stringify(MOCK_AUDIENCE));
+      sessionStorage.setItem("demo_segments", JSON.stringify(segs));
+    } catch {
+      // ignore
+    }
+
     setStep("done");
     setLoading(false);
   }
@@ -68,7 +77,7 @@ export default function DashboardPage() {
         <div className="flex gap-2">
           {step === "done" && (
             <button
-              onClick={() => router.push("/agent-feed")}
+              onClick={() => router.push("/agent-feed?demo=1")}
               className="inline-flex h-9 items-center rounded-lg border border-neon/30 px-5 text-sm font-semibold text-neon hover:bg-neon-glow transition-colors"
             >
               View Agent Feed

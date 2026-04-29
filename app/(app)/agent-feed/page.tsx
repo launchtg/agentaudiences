@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import ActionCard from "@/components/ActionCard";
 import ApiPreview from "@/components/ApiPreview";
@@ -24,20 +24,53 @@ function AgentFeedInner() {
   const [actions, setActions] = useState<AgentAction[]>([]);
   const [showApi, setShowApi] = useState(false);
   const [loading, setLoading] = useState(false);
+  const didInit = useRef(false);
 
   useEffect(() => {
-    if (searchParams.get("demo") === "1" && actions.length === 0) {
-      generate();
+    if (didInit.current) return;
+    didInit.current = true;
+
+    const isDemo = searchParams.get("demo") === "1";
+    const audienceId = searchParams.get("audienceId");
+
+    if (isDemo || audienceId) {
+      loadDemoData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
+
+  function loadDemoData() {
+    // Try sessionStorage first (set by landing page / dashboard)
+    try {
+      const stored = sessionStorage.getItem("demo_actions");
+      if (stored) {
+        const parsed = JSON.parse(stored) as AgentAction[];
+        if (parsed.length > 0) {
+          setActions(parsed);
+          return;
+        }
+      }
+    } catch {
+      // sessionStorage not available or parse failed
+    }
+
+    // Fallback: generate fresh client-side
+    generate();
+  }
 
   async function generate() {
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 300));
     const segs = generateSegments(MOCK_AUDIENCE, MOCK_SUBSCRIBERS);
     const acts = generateActions(MOCK_AUDIENCE, segs);
     setActions(acts);
+
+    // Cache for future navigation
+    try {
+      sessionStorage.setItem("demo_actions", JSON.stringify(acts));
+    } catch {
+      // ignore
+    }
+
     setLoading(false);
   }
 

@@ -9,9 +9,10 @@ export interface ScoringInputs {
 
 export type ActionPriority = "critical" | "high" | "medium" | "hidden";
 
-// Max raw score: (1.0 × 10 × 1.0 × 1.0 × 5) / 1 = 50
-// Min raw score: (0.1 × 1 × 0.1 × 0.1 × 1) / 10 = 0.0001
-const MAX_RAW = 50;
+// Realistic "best case" raw: ~6 (high intent, high value, large segment, moderate effort)
+// Cube root normalization compresses the multiplicative spread so scores
+// distribute across the 55-100 range instead of clustering near zero.
+const MAX_RAW = 5.5;
 
 export function calculateActionScore(inputs: ScoringInputs): number {
   const raw =
@@ -22,7 +23,8 @@ export function calculateActionScore(inputs: ScoringInputs): number {
       inputs.segment_size_weight) /
     inputs.execution_effort;
 
-  return Math.min(100, Math.round((raw / MAX_RAW) * 100));
+  const normalized = Math.cbrt(raw / MAX_RAW);
+  return Math.min(100, Math.round(normalized * 100));
 }
 
 export function getPriority(score: number): ActionPriority {
@@ -51,9 +53,10 @@ export function shouldShowAction(score: number): boolean {
 // const priority = getPriority(score);          // "medium"
 // const show = shouldShowAction(score);         // true
 //
-// --- Edge cases ---
+// --- Edge cases (cube root normalization, MAX_RAW=5.5) ---
 //
 // Perfect score:  { 1.0, 10, 1.0, 1.0, 5, 1 } → 100 (critical)
-// Worst score:    { 0.1,  1, 0.1, 0.1, 1, 10 } → 0   (hidden)
-// Mid-range:      { 0.5,  5, 0.5, 0.5, 3, 5 }  → 2   (hidden)
-// High-effort:    { 1.0, 10, 1.0, 1.0, 5, 10 } → 10  (hidden)
+// Strong action:  { 0.9,  9, 0.9, 0.85,3, 4 } → 95  (critical)
+// Good action:    { 0.8,  7, 0.7, 0.8, 2, 3 } → 72  (medium)
+// Weak action:    { 0.4,  4, 0.3, 0.7, 1, 3 } → 39  (hidden)
+// Worst score:    { 0.1,  1, 0.1, 0.1, 1, 10 } → 3   (hidden)

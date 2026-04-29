@@ -17,9 +17,23 @@ export default function LandingPage() {
 
   async function runDemo() {
     setRunning(true);
+
+    // Generate data client-side
     const segs = generateSegments(MOCK_AUDIENCE, MOCK_SUBSCRIBERS);
-    generateActions(MOCK_AUDIENCE, segs);
-    await new Promise((r) => setTimeout(r, 500));
+    const acts = generateActions(MOCK_AUDIENCE, segs);
+
+    // Persist to sessionStorage so it survives navigation
+    try {
+      sessionStorage.setItem("demo_actions", JSON.stringify(acts));
+      sessionStorage.setItem("demo_audience", JSON.stringify(MOCK_AUDIENCE));
+      sessionStorage.setItem("demo_segments", JSON.stringify(segs));
+    } catch (e) {
+      console.error("[demo] sessionStorage write failed:", e);
+    }
+
+    // Also try Supabase persistence (non-blocking)
+    fetch("/api/demo/run", { method: "POST" }).catch(() => {});
+
     router.push("/agent-feed?demo=1");
   }
 

@@ -9,6 +9,7 @@ const NAV = [
   { href: "/audiences", label: "Audiences", icon: UsersIcon },
   { href: "/segments", label: "Segments", icon: PieIcon },
   { href: "/agent-feed", label: "Agent Feed", icon: ZapIcon },
+  { href: "/agent-connections", label: "Agent Connections", icon: PlugIcon },
 ];
 
 export default function Sidebar() {
@@ -85,6 +86,17 @@ function ZapIcon({ active }: { active: boolean }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={active ? "text-neon" : "text-muted group-hover:text-white/60"}>
       <path d="M8.5 1.5L3 9h4.5l-1 5.5L13 7H8.5l1-5.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PlugIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={active ? "text-neon" : "text-muted group-hover:text-white/60"}>
+      <path d="M6 2v3M10 2v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <rect x="4" y="5" width="8" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8 9v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M5.5 12h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }

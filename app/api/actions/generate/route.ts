@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { generateActions } from "@/lib/generators/actions";
+import { generateActionsFromTemplates } from "@/lib/engine/generateFromRules";
 import type { Audience, Segment } from "@/lib/mockData";
+import type { ActionTemplateRow } from "@/lib/types/rules";
+import type { Capability } from "@/lib/execution/capabilities";
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,14 +53,53 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate actions deterministically
-    const actions = generateActions(
-      audience as Audience,
-      segments as Segment[]
-    );
+    // Fetch capabilities
+    const { data: capRows } = await supabase
+      .from("audience_capabilities")
+      .select("*")
+      .eq("audience_id", body.audience_id);
+
+    const capabilities: Capability[] | undefined = capRows
+      ? capRows.map((c) => ({
+          capability_key: c.capability_key,
+          capability_label: c.capability_label,
+          status: c.status as "available" | "missing",
+          connected_tool: c.connected_tool,
+          tool_category: c.tool_category,
+        }))
+      : undefined;
+
+    // Check for approved action templates (hybrid path)
+    const { data: approvedTemplates } = await supabase
+      .from("action_templates")
+      .select("*")
+      .eq("audience_id", body.audience_id)
+      .eq("status", "approved");
+
+    let generatedActions;
+    let mode: string;
+
+    if (approvedTemplates && approvedTemplates.length > 0) {
+      // Hybrid path: use stored templates
+      generatedActions = generateActionsFromTemplates(
+        audience as Audience,
+        segments as Segment[],
+        approvedTemplates as ActionTemplateRow[],
+        capabilities
+      );
+      mode = "hybrid";
+    } else {
+      // Legacy path: use hardcoded templates
+      generatedActions = generateActions(
+        audience as Audience,
+        segments as Segment[],
+        capabilities
+      );
+      mode = "legacy";
+    }
 
     // Save to database
-    const rows = actions.map((action) => ({
+    const rows = generatedActions.map((action) => ({
       audience_id: body.audience_id,
       segment_id: action.segment_id,
       title: action.title,
@@ -86,7 +128,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { generated: saved.length, actions: saved },
+      { generated: saved.length, mode, actions: saved },
       { status: 201 }
     );
   } catch {

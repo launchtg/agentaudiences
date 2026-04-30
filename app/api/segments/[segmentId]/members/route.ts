@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { createHash } from "crypto";
 import { SEGMENT_RULES } from "@/lib/generators/segments";
+import { evaluateRule } from "@/lib/engine/evaluateRule";
+import type { ConditionGroup } from "@/lib/types/rules";
 import type { Subscriber } from "@/lib/mockData";
 
 function hashKey(key: string): string {
@@ -77,16 +79,32 @@ export async function GET(
       );
     }
 
-    // Find the matching segment rule by name
-    const rule = SEGMENT_RULES.find((r) => r.name === segment.name);
-
+    // Determine matching strategy
     let matched: Subscriber[];
-    if (rule) {
-      // Apply the exact same matching logic used during generation
-      matched = (subscribers as unknown as Subscriber[]).filter(rule.match);
+
+    if (segment.segment_rule_id) {
+      // Hybrid path: use stored rule conditions
+      const { data: storedRule } = await supabase
+        .from("segment_rules")
+        .select("conditions")
+        .eq("id", segment.segment_rule_id)
+        .single();
+
+      if (storedRule) {
+        matched = (subscribers as unknown as Record<string, unknown>[]).filter(
+          (s) => evaluateRule(storedRule.conditions as ConditionGroup, s)
+        ) as unknown as Subscriber[];
+      } else {
+        matched = subscribers as unknown as Subscriber[];
+      }
     } else {
-      // Fallback: return all subscribers (shouldn't happen with known segments)
-      matched = subscribers as unknown as Subscriber[];
+      // Legacy path: find hardcoded rule by name
+      const rule = SEGMENT_RULES.find((r) => r.name === segment.name);
+      if (rule) {
+        matched = (subscribers as unknown as Subscriber[]).filter(rule.match);
+      } else {
+        matched = subscribers as unknown as Subscriber[];
+      }
     }
 
     return NextResponse.json({

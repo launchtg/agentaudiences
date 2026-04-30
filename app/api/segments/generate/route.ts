@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { generateSegments } from "@/lib/generators/segments";
+import { generateSegmentsFromRules } from "@/lib/engine/generateFromRules";
 import type { Audience, Subscriber } from "@/lib/mockData";
+import type { SegmentRuleRow } from "@/lib/types/rules";
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,23 +52,52 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate segments deterministically
-    const segments = generateSegments(
-      audience as Audience,
-      subscribers as Subscriber[]
-    );
+    // Check for approved segment rules (hybrid path)
+    const { data: approvedRules } = await supabase
+      .from("segment_rules")
+      .select("*")
+      .eq("audience_id", body.audience_id)
+      .eq("status", "approved");
 
-    // Upsert segments into database
-    const rows = segments.map((seg) => ({
-      audience_id: body.audience_id,
-      name: seg.name,
-      description: seg.description,
-      segment_type: seg.segment_type,
-      subscriber_count: seg.subscriber_count,
-      defining_traits: seg.defining_traits,
-      monetization_paths: seg.monetization_paths,
-      confidence: seg.confidence,
-    }));
+    let rows: Record<string, unknown>[];
+
+    if (approvedRules && approvedRules.length > 0) {
+      // Hybrid path: use stored rules
+      const segments = generateSegmentsFromRules(
+        audience as Audience,
+        subscribers as Record<string, unknown>[],
+        approvedRules as SegmentRuleRow[]
+      );
+
+      rows = segments.map((seg) => ({
+        audience_id: body.audience_id,
+        name: seg.name,
+        description: seg.description,
+        segment_type: seg.segment_type,
+        subscriber_count: seg.subscriber_count,
+        defining_traits: seg.defining_traits,
+        monetization_paths: seg.monetization_paths,
+        confidence: seg.confidence,
+        segment_rule_id: seg.segment_rule_id,
+      }));
+    } else {
+      // Legacy path: use hardcoded rules
+      const segments = generateSegments(
+        audience as Audience,
+        subscribers as Subscriber[]
+      );
+
+      rows = segments.map((seg) => ({
+        audience_id: body.audience_id,
+        name: seg.name,
+        description: seg.description,
+        segment_type: seg.segment_type,
+        subscriber_count: seg.subscriber_count,
+        defining_traits: seg.defining_traits,
+        monetization_paths: seg.monetization_paths,
+        confidence: seg.confidence,
+      }));
+    }
 
     const { data: saved, error: insertError } = await supabase
       .from("segments")
@@ -81,7 +112,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { generated: saved.length, segments: saved },
+      {
+        generated: saved.length,
+        mode: approvedRules && approvedRules.length > 0 ? "hybrid" : "legacy",
+        segments: saved,
+      },
       { status: 201 }
     );
   } catch {

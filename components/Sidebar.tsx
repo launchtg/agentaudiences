@@ -8,6 +8,7 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutIcon },
   { href: "/audiences", label: "Audiences", icon: UsersIcon },
   { href: "/segments", label: "Segments", icon: PieIcon },
+  { href: "/analyze", label: "Analyze", icon: SearchIcon },
   { href: "/agent-feed", label: "Agent Feed", icon: ZapIcon },
   { href: "/agent-connections", label: "Agent Connections", icon: PlugIcon },
   { href: "/settings/capabilities", label: "Capabilities", icon: GearIcon },
@@ -98,6 +99,15 @@ function PlugIcon({ active }: { active: boolean }) {
       <rect x="4" y="5" width="8" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
       <path d="M8 9v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
       <path d="M5.5 12h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SearchIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={active ? "text-neon" : "text-muted group-hover:text-white/60"}>
+      <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }
